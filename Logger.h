@@ -1,18 +1,4 @@
-#genarates a C/C++ logger
-
-import sys
-import os
-
-#args formate || define name for configs, prog name for logging
-#example || python GenLogger.py SMOK Smok
-#example || python GenLogger.py GL Glfix
-
-defineName = sys.argv[1]
-progName = sys.argv[2]
-
-os.makedirs("includes", exist_ok= True)
-log = open("includes/Logger.h", "w+")
-log.write("//defines a logger for " + progName + """
+//defines a Logger
 
 #ifndef Logger_h
 #define Logger_h
@@ -20,21 +6,29 @@ log.write("//defines a logger for " + progName + """
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
-#define LogMessage(message) printf(\"%s\\n\", message);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#ifdef """ + defineName + """_RELEASE
+//redefine this for your prog
+#define PROG_NAME ""
+
+#define LogMessage(message) printf("%s\n", message);
+
+#ifdef FATAL_LOG_ONLY
 
 #define LogWarning(code, message)
 #define LogError(code, message)
-#define LogFatalError(code, message) printf(\"""" + progName + """ Fatal Error: %s || %s\\n\", code, message); getchar(); exit(1);
+#define LogFatalError(code, message) printf("%s Fatal Error: %s || %s\n", PROG_NAME, code, message); getchar(); exit(1);
 
 #define LogData(formate, ...)
 #define LogFatalData(formate, ...) printf(formate, __VA_ARGS__); getchar(); exit(1);
 
 #endif
 
-#ifdef """ + defineName + """_DIST
+#ifdef FATAL_LOG_DATA_ONLY
 
 #define LogWarning(code, message)
 #define LogError(code, message)
@@ -45,11 +39,11 @@ log.write("//defines a logger for " + progName + """
 
 #endif
 
-#ifdef """ + defineName + """_DEBUG
+#ifdef LOG_ALL
 
-#define LogWarning(code, message) printf(\"""" + progName + """ Warning : %s || %s\\n", code, message);
-#define LogError(code, message) printf(\"""" + progName + """ Error : %s || %s\\n", code, message);
-#define LogFatalError(code, message) printf(\"""" + progName + """ Fatal Error: %s || %s\\n", code, message); getchar(); exit(1);
+#define LogWarning(code, message) printf("%s Warning : %s || %s\n", PROG_NAME, code, message);
+#define LogError(code, message) printf("%s Error : %s || %s\n", PROG_NAME, code, message);
+#define LogFatalError(code, message) printf("%s Fatal Error: %s || %s\n", PROG_NAME, code, message); getchar(); exit(1);
 
 #define LogData(formate, ...) printf(formate, __VA_ARGS__);
 #define LogFatalData(formate, ...) printf(formate, __VA_ARGS__); getchar(); exit(1);
@@ -72,4 +66,8 @@ log.write("//defines a logger for " + progName + """
 #define LogFatalData(formate, ...)
 #endif
 
-#endif""")
+#ifdef __cplusplus
+}
+#endif
+
+#endif

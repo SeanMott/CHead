@@ -1,5 +1,5 @@
-# CTools
-Different tools used when writing C or C++ code
+# CHead
+Differnt single header files written in c
 
-- GenLogger || Genarates a Logger header file
-- GenFileHandler || Genarates a File Handler header file and C file(s) for each platform
+- Logger || A Macro based Logger
+- FileHandler || Allows file handling (and a few string stuff)
