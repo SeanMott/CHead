@@ -7,80 +7,79 @@
 extern "C" {
 #endif
 
-#include "Logger.h"
-
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 
-//opens a file
-const char* FileHandle_OpenFile(const char* filepath);
-//writes a file
+	//opens a file
+	const char* FileHandle_OpenFile(const char* filepath);
+	//writes a file
 
-//checks if a string is the same as the other
-bool FileHandle_StringMatch(const char* str1, const char* str2);
-//return the end of a string || taken from NetHack || Link: https://github.com/NetHack/NetHack/blob/NetHack-3.7/src/hacklib.c
-char* FileHandle_GetEndOfString(register char* str);
-//concats a char to a string (it's adorable) || taken from NetHack || Link: https://github.com/NetHack/NetHack/blob/NetHack-3.7/src/hacklib.c
-char* FileHandle_StrKitten(char* str, char c);
+	//checks if a string is the same as the other
+	bool FileHandle_StringMatch(const char* str1, const char* str2);
+	//return the end of a string || taken from NetHack || Link: https://github.com/NetHack/NetHack/blob/NetHack-3.7/src/hacklib.c
+	char* FileHandle_GetEndOfString(register char* str);
+	//concats a char to a string (it's adorable) || taken from NetHack || Link: https://github.com/NetHack/NetHack/blob/NetHack-3.7/src/hacklib.c
+	char* FileHandle_StrKitten(char* str, char c);
 
-//differnt builds
-#define Window_Build
+	//differnt builds
+#ifdef Define_Window_Build
 
-const char* FileHandle_OpenFile(const char* filepath)
-{
-    FILE* file;
-	char* text = 0;
-	long length;
-
-	file = fopen(filepath, "rb");
-	if (!file)
+	const char* FileHandle_OpenFile(const char* filepath)
 	{
-		LogData("Error: File Handler || Failed to open file at: %s\n", filepath);
-		return NULL;
+		FILE* file;
+		char* text = 0;
+		long length;
+
+		file = fopen(filepath, "rb");
+		if (!file)
+		{
+			printf("Error: File Handler || Failed to open file at: %s\n", filepath);
+			return NULL;
+		}
+
+		fseek(file, 0, SEEK_END);
+		length = ftell(file);
+		fseek(file, 0, SEEK_SET);
+		text = (char*)calloc(length, length);
+		if (text)
+			fread(text, 1, length, file);
+
+		fclose(file);
+
+		return text;
 	}
 
-	fseek(file, 0, SEEK_END);
-	length = ftell(file);
-	fseek(file, 0, SEEK_SET);
-	text = calloc(length, length);
-	if (text)
-		fread(text, 1, length, file);
+	//writes a file
 
-	fclose(file);
+	bool FileHandle_StringMatch(const char* str1, const char* str2)
+	{
+		return (strcmp(str1, str2) == 0 ? true : false);
+	}
 
-	return text;
-}
+	char* FileHandle_GetEndOfString(register char* str)
+	{
+		while (*str)
+			str++;
+		return str;
+	}
 
-//writes a file
+	char* FileHandle_StrKitten(char* str, char c)
+	{
+		char* p = FileHandle_GetEndOfString(str);
 
-bool FileHandle_StringMatch(const char* str1, const char* str2)
-{
-    return (strcmp(str1, str2) == 0 ? true : false);
-}
-
-char* FileHandle_GetEndOfString(register char* str)
-{
-    while (*str)
-        str++;
-    return str;
-}
-
-char* FileHandle_StrKitten(char* str, char c)
-{
-    char *p = FileHandle_GetEndOfString(str);
-
-    *p++ = c;
-    *p = '\0';
-    return str;
-}
+		*p++ = c;
+		*p = '\0';
+		return str;
+	}
 
 #endif
 
-#define Mac_Build
+#ifdef Define_Mac_Build
 #endif
 
-#define Linux_Build
+#ifdef Define_Linux_Build
 #endif
 
 #ifdef __cplusplus
